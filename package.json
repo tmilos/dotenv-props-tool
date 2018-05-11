@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "CLI tool that produces dotenv or properties format by mergin values and adding arbitrary values from given dotenv or properties sources",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tmilos/dotenv-props-tool"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

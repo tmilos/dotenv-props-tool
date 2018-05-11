@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var fs = require("fs")
 var properties = require("properties")
 var dotenv = require("dotenv")

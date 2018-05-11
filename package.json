@@ -1,0 +1,25 @@
+{
+  "name": "dotenv-props-tool",
+  "version": "1.0.0",
+  "description": "CLI tool that produces dotenv or properties format by mergin values and adding arbitrary values from given dotenv or properties sources",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "dotenv",
+    "properties",
+    "cli",
+    "command line"
+  ],
+  "author": "Milos Tomic <tmilos@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^5.0.1",
+    "minimist": "^1.2.0",
+    "properties": "^1.2.1"
+  },
+  "bin": {
+    "dotenv-props-tool": "./index.js"
+  }
+}

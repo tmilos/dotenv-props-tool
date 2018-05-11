@@ -1,6 +1,6 @@
 {
   "name": "dotenv-props-tool",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "CLI tool that produces dotenv or properties format by mergin values and adding arbitrary values from given dotenv or properties sources",
   "main": "index.js",
   "repository": {

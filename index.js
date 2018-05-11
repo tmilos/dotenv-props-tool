@@ -112,7 +112,7 @@ sourceReader(sourceFile, function(err, sourceObj) {
         var string = stringify(destinationObj)
 
         if (typeof args.save == "boolean") {
-            fs.writeFileSync(destinationFile+".1", string)
+            fs.writeFileSync(destinationFile, string)
         } else if (typeof args.save == "string") {
             fs.writeFileSync(args.save, string)
         } else {

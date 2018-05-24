@@ -39,3 +39,21 @@ to the /path2/.env and saves the result to stdout:
 ```bash
 $ dotenv-props-tool e2e /path1/.env /path2/.env MYSQL_USERNAME DB_USER --save /path3/.env
 ```
+
+# Merge
+
+Merge commands take series of given files, merges them onto other and prints or saves the result
+
+```bash
+$ dotenv-props-tool command target ...sources [--save [file]]
+```
+
+Commands:
+* me - Given target and sources files are dotenv files
+* mp - Given target and sources files are properties files
+
+For example, to merge env.dist with .env and save the result back to .env you can:
+
+```bash
+$ dotenv-props-tool me .env .env.dist --save
+```

@@ -13,7 +13,7 @@ function printUsage(err) {
     if (err) console.log(err)
     console.log("")
     console.log("Mapping usage:")
-    console.log("  $ dotenv-props-tool command source destination from to [from to ...] [--save]")
+    console.log("  $ dotenv-props-tool command source destination from to [from to ...] [--save [file]]")
     console.log("")
     console.log("  Commands:")
     console.log("    e2p  Source is dotenv and destination is properties")
@@ -36,6 +36,13 @@ function printUsage(err) {
     console.log("    re  Read dotenv")
     console.log("    rp  Read properties")
     console.log("")
+    console.log("Merge usage:")
+    console.log("   $ dotenv-props-tool command target ...sources [--save [file]]")
+    console.log("")
+    console.log("  Commands:")
+    console.log("    me  Merge dotenv")
+    console.log("    mp  Merge properties")
+    console.log("")
     console.log("Examples:")
     console.log("")
     console.log("  Reads value of MYSQL_USERNAME from the /path/.env and adds that value as spring.datasource.username")
@@ -57,13 +64,28 @@ function printUsage(err) {
     console.log("        MYSQL_USERNAME john \\")
     console.log("        --save")
     console.log("")
+    console.log("  Merge .env and .env.dist and print to stdout:")
+    console.log("")
+    console.log("    $ dotenv-props-tool me .env .env.dist ")
+    console.log("")
+    console.log("  Merge .env and .env.dist and save result to .env:")
+    console.log("")
+    console.log("    $ dotenv-props-tool me .env .env.dist --save")
+    console.log("")
     process.exit(1)
 }
 
 
 function printError(e) {
-    console.log("Error", e)
+    console.error("Error", e)
     process.exit(1)
+}
+
+function fileExists(filename) {
+    try {
+        return fs.statSync(filename).isFile()
+    } catch (e) { }
+    return false;
 }
 
 function envReader(file, callback) {
@@ -100,7 +122,8 @@ var cmdMap = {
     p2p: mapping,
     e2e: mapping,
     re: reading,
-    rp: reading
+    rp: reading,
+    me: merge
 }
 
 
@@ -111,6 +134,88 @@ if (!cmdMap[command]) {
 
 cmdMap[command]()
 
+function merge() {
+    var cmdReaderMap = {
+        'me': [envReader, propertiesStringify],
+        'mp': [propertiesReader, propertiesStringify]
+    }
+    var set = cmdReaderMap[command]
+    if (!set) {
+        printError("Invalid merge command "+command)
+    }
+    var reader = set[0]
+    var stringify = set[1]
+
+    var sourceFile = args._[0]
+
+    load({})
+
+    function load(merged) {
+        merged = merged || {}
+        if (args._.length < 1) {
+            done(merged)
+        } else {
+            var file = args._.shift()
+            if (file == '-') {
+                load(merged)
+            } else if (!fileExists(file)) {
+                console.error("Warning: Skipping file that does not exist: "+file)
+                load(merged)
+            } else {
+                reader(file, function(err, obj) {
+                    if (err) printError(err)
+                    merged = Object.assign(obj, merged)
+                    load(merged)
+                })
+            }
+        }
+    }
+
+    function done(merged) {
+        var string = stringify(merged)
+        if (typeof args.save == "boolean") {
+            fs.writeFileSync(sourceFile, string)
+        } else if (typeof args.save == "string") {
+            fs.writeFileSync(args.save, string)
+        } else {
+            console.log(string)
+        }        
+    }
+
+    // function mergeObjects(sourceObj, destinationObj) {
+    //     var merged = Object.assign(sourceObj, destinationObj);
+
+    //     var string = stringify(merged)
+
+    //     if (typeof args.save == "boolean") {
+    //         fs.writeFileSync(destinationFile, string)
+    //     } else if (typeof args.save == "string") {
+    //         fs.writeFileSync(args.save, string)
+    //     } else {
+    //         console.log(string)
+    //     }
+    // }
+
+    // function loadDestination(sourceObj) {
+    //     if (destinationFile == '' || !fileExists(destinationFile)) {
+    //         mergeObjects(sourceObj, {})
+    //     } else {
+    //         reader(destinationFile, function (err, destinationObj) {
+    //             if (err) printError(err)                
+    //             mergeObjects(sourceObj, destinationObj)
+    //         })
+    //     }
+    // }
+
+    // if (sourceFile == '-' || !fileExists(sourceFile)) {
+    //     loadDestination({})
+    // } else {
+    //     reader(sourceFile, function (err, sourceObj) {
+    //         if (err) printError(err)
+    //         loadDestination(sourceObj)
+    //     })
+    // }
+}
 
 function mapping() {
     var cmdReaderMap = {

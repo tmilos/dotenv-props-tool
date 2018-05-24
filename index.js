@@ -4,6 +4,7 @@ var fs = require("fs")
 var properties = require("properties")
 var dotenv = require("dotenv")
 var args = require("minimist")(process.argv.slice(2))
+var stringifier = require('properties/lib/stringify')
 
 if (args.help || args._.length < 1) {
     printUsage()
@@ -112,7 +113,8 @@ function propertiesReader(file, callback) {
 }
 
 function propertiesStringify(obj) {
-    return properties.stringify(obj)
+    return stringifier(obj, {_separator: '=', _comment: '# '})
+    //return properties.stringify(obj, {separator: '='})
 }
 
 var cmdMap = {
